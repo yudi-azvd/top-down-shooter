@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://player/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/grass-texture.jpg" type="Texture" id=2]
+
+[node name="Logo" type="Node2D"]
+position = Vector2( 221, 203 )
+
+[node name="Grass-texture" type="Sprite" parent="."]
+position = Vector2( 9, 22 )
+texture = ExtResource( 2 )
+
+[node name="Sprite" type="Sprite" parent="."]
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
