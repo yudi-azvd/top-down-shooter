@@ -264,7 +264,7 @@ animation = "strafe-right"
 
 [node name="AnimatedSpriteTorso" type="AnimatedSprite" parent="."]
 frames = SubResource( 2 )
-animation = "rifle-move"
+animation = "rifle-idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 0.999999, 16 )

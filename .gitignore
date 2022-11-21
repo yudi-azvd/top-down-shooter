@@ -14,3 +14,6 @@ data_*/
 *.png
 *.spine
 *.xfc
+*.mp3
+*.wav
+*.flac

@@ -26,13 +26,13 @@ onready var animatedSpriteTorso = $AnimatedSpriteTorso
 onready var animatedSpriteLegs = $AnimatedSpriteLegs
 
 var ACC := 800
-var shoot_count := 0
 var FRICTION := 1000
 export(int) var MAX_WALK_SPEED := 200
 export(int) var MAX_WALK_SPEED_BACKWARDS := 150
 export(Vector2) var movement_input := Vector2.ZERO
 export(Vector2) var direction_input := Vector2.RIGHT
 var velocity := Vector2.ZERO
+var shoot_count := 0
 
 var legs_state = Legs.IDLE
 var torso_state = Torso.IDLE
