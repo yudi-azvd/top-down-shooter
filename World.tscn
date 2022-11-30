@@ -1,36 +1,32 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=3 uid="uid://bdbvyp130kd0b"]
 
-[ext_resource path="res://player/Player.tscn" type="PackedScene" id=1]
-[ext_resource path="res://World.gd" type="Script" id=2]
-[ext_resource path="res://assets/RobotoMono-VariableFont_wght.ttf" type="DynamicFontData" id=3]
-[ext_resource path="res://zombie/Zombie.tscn" type="PackedScene" id=4]
-[ext_resource path="res://assets/grass-texture.jpg" type="Texture" id=5]
+[ext_resource type="PackedScene" uid="uid://dfhsstp2ilcro" path="res://player/Player.tscn" id="1"]
+[ext_resource type="Script" path="res://World.gd" id="2"]
+[ext_resource type="PackedScene" path="res://zombie/Zombie.tscn" id="4"]
+[ext_resource type="FontFile" uid="uid://dtxdmxspa1cn3" path="res://assets/RobotoMono-VariableFont_wght.ttf" id="4_76i7a"]
+[ext_resource type="Texture2D" uid="uid://ochrgoxthfsm" path="res://assets/grass-texture.jpg" id="5"]
 
-[sub_resource type="DynamicFont" id=1]
-size = 24
-font_data = ExtResource( 3 )
-
-[node name="World" type="Node2D"]
-script = ExtResource( 2 )
+[node name="World3D" type="Node2D"]
+script = ExtResource("2")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-modulate = Color( 0.839216, 0.839216, 0.839216, 1 )
-margin_right = 1046.0
-margin_bottom = 614.0
+modulate = Color(0.839216, 0.839216, 0.839216, 1)
+offset_right = 1046.0
+offset_bottom = 614.0
 grow_horizontal = 2
-texture = ExtResource( 5 )
+texture = ExtResource("5")
 stretch_mode = 2
 
-[node name="Player" parent="." instance=ExtResource( 1 )]
-position = Vector2( 427, 251 )
+[node name="Player" parent="." instance=ExtResource("1")]
+position = Vector2(427, 251)
 
 [node name="Label" type="Label" parent="."]
-margin_left = 778.0
-margin_top = 381.0
-margin_right = 814.0
-margin_bottom = 414.0
-custom_fonts/font = SubResource( 1 )
+offset_left = 778.0
+offset_top = 381.0
+offset_right = 814.0
+offset_bottom = 414.0
+theme_override_fonts/font = ExtResource("4_76i7a")
 text = "Oi"
 
-[node name="Zombie" parent="." instance=ExtResource( 4 )]
-position = Vector2( 122, 487 )
+[node name="Zombie" parent="." instance=ExtResource("4")]
+position = Vector2(122, 487)

@@ -1,4 +1,4 @@
-extends KinematicBody2D
+extends CharacterBody2D
 
 enum Legs {
 	IDLE,
@@ -22,16 +22,15 @@ enum SelectedItem {
 }
 
 
-onready var animatedSpriteTorso = $AnimatedSpriteTorso
-onready var animatedSpriteLegs = $AnimatedSpriteLegs
+@onready var animatedSpriteTorso = $AnimatedSpriteTorso
+@onready var animatedSpriteLegs = $AnimatedSpriteLegs
 
 var ACC := 800
 var FRICTION := 1000
-export(int) var MAX_WALK_SPEED := 200
-export(int) var MAX_WALK_SPEED_BACKWARDS := 150
-export(Vector2) var movement_input := Vector2.ZERO
-export(Vector2) var direction_input := Vector2.RIGHT
-var velocity := Vector2.ZERO
+@export var MAX_WALK_SPEED: int = 200
+@export var MAX_WALK_SPEED_BACKWARDS: int = 150
+@export var movement_input: Vector2 = Vector2.ZERO
+@export var direction_input: Vector2 = Vector2.RIGHT
 var shoot_count := 0
 
 var legs_state = Legs.IDLE
@@ -60,7 +59,7 @@ func _physics_process(delta: float) -> void:
 	
 	if movement_input != Vector2.ZERO:
 		diff = movement_input.angle() - rotation
-		diff_deg = rad2deg(diff)
+		diff_deg = rad_to_deg(diff)
 		cos_diff = cos(diff)
 		var tol = 1-cos(PI/4)
 		if 1 - tol < cos_diff and cos_diff < 1 + tol:
@@ -82,7 +81,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION*delta)
 	
-	velocity = move_and_slide(velocity)
+	set_velocity(velocity)
+	move_and_slide()
+	velocity = velocity
 	if velocity == Vector2.ZERO:
 		animatedSpriteLegs.play('idle')
 
@@ -90,7 +91,7 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		look_at_mouse()
 	
-	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.is_pressed():
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
 		shoot()
 	
 	if Input.is_action_just_released('reload'):
@@ -104,7 +105,7 @@ func reload():
 		return
 
 	animatedSpriteTorso.play(concat_curr_selected_item('reload'))
-	yield(animatedSpriteTorso, 'animation_finished')
+	await animatedSpriteTorso.animation_finished
 	if legs_state == Legs.WALKING or legs_state == Legs.RUNNING:
 		animatedSpriteTorso.play(concat_curr_selected_item('walk'))
 	else:
@@ -116,7 +117,7 @@ func shoot():
 
 	shoot_count += 1
 	animatedSpriteTorso.play(concat_curr_selected_item('shoot'))
-	yield(animatedSpriteTorso, 'animation_finished')
+	await animatedSpriteTorso.animation_finished
 	if legs_state == Legs.WALKING or legs_state == Legs.RUNNING:
 		animatedSpriteTorso.play(concat_curr_selected_item('walk'))
 	else:
@@ -133,9 +134,10 @@ func look_at_mouse():
 	look_at(get_global_mouse_position())
 
 func _process(_delta: float) -> void:
-	update()
+#	self.update()
+	pass
 
 func _draw() -> void:
-	draw_line(Vector2.ZERO, get_local_mouse_position().normalized()*200, Color.white, 2)
-	draw_line(Vector2.ZERO, direction_input*100, Color.blue, 2)
-	draw_line(Vector2.ZERO, velocity.normalized().rotated(-rotation)*200, Color.red, 2)
+	draw_line(Vector2.ZERO, get_local_mouse_position().normalized()*200, Color.WHITE, 2)
+	draw_line(Vector2.ZERO, direction_input*100, Color.BLUE, 2)
+	draw_line(Vector2.ZERO, velocity.normalized().rotated(-rotation)*200, Color.RED, 2)
