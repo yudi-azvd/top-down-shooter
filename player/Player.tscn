@@ -251,8 +251,8 @@ animations = [{
 }]
 
 [sub_resource type="CapsuleShape2D" id="1"]
-radius = 26.8101
-height = 53.6202
+radius = 45.9564
+height = 145.105
 
 [node name="Player" type="CharacterBody2D"]
 scale = Vector2(0.4, 0.4)
@@ -267,6 +267,6 @@ frames = SubResource("2")
 animation = &"rifle-idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0.999999, 16)
+position = Vector2(-45, 25)
 rotation = 0.800987
 shape = SubResource("1")

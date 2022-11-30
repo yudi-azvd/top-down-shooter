@@ -6,7 +6,7 @@
 [ext_resource type="FontFile" uid="uid://dtxdmxspa1cn3" path="res://assets/RobotoMono-VariableFont_wght.ttf" id="4_76i7a"]
 [ext_resource type="Texture2D" uid="uid://ochrgoxthfsm" path="res://assets/grass-texture.jpg" id="5"]
 
-[node name="World3D" type="Node2D"]
+[node name="World" type="Node2D"]
 script = ExtResource("2")
 
 [node name="TextureRect" type="TextureRect" parent="."]

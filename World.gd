@@ -10,7 +10,7 @@ var cos_diff := 0.0
 
 func _process(_delta: float) -> void:
 	text = ''
-	text += 'mov       %d°\n' % rad_to_deg(player.movement_input.angle())
+	text += 'mov       %+d°\n' % rad_to_deg(player.movement_input.angle())
 	text += 'rot       %+d°\n' % round(rad_to_deg(player.rotation))
 	text += '\n'
 	
