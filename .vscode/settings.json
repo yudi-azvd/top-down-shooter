@@ -2,6 +2,6 @@
     "files.exclude": {
         "**/.git": true,
         "**/*.import": true,
-        ".godot/**": true,
+        // ".godot/**": true,
     }
 }

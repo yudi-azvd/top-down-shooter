@@ -1,9 +1,9 @@
 [gd_scene load_steps=2 format=3 uid="uid://febl5rj1q4ip"]
 
-[ext_resource type="Script" path="res://src/bullet/BulletManager.gd" id="1_u5fj7"]
+[ext_resource type="Script" path="res://src/weapon/WeaponManager.gd" id="1_aycek"]
 
-[node name="BulletManager" type="Node2D"]
-script = ExtResource("1_u5fj7")
+[node name="WeaponManager" type="Node2D"]
+script = ExtResource("1_aycek")
 
 [node name="StartPoint" type="Marker2D" parent="."]
 position = Vector2(92, 42)
