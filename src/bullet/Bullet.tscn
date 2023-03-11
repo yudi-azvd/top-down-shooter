@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://d2xi640iqkdye"]
+
+[ext_resource type="Script" path="res://src/bullet/Bullet.gd" id="1_3mv04"]
+[ext_resource type="Texture2D" uid="uid://xnyffog37g1q" path="res://assets/icon-bullet-handgun.png" id="2_mpksu"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ng5jd"]
+radius = 6.0
+height = 38.0
+
+[node name="Bullet" type="Area2D"]
+scale = Vector2(0.25, 0.25)
+script = ExtResource("1_3mv04")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.143, 0.143)
+texture = ExtResource("2_mpksu")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -1)
+shape = SubResource("CapsuleShape2D_ng5jd")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
