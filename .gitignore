@@ -12,12 +12,7 @@ addons/
 data_*/
 
 # Temporário
-*.png
-*.jpg
 *.spine
-*.xfc
-*.mp3
-*.wav
 *.flac
 
 .godot/*
