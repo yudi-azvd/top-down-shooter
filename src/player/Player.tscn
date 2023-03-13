@@ -513,9 +513,9 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("109_8jxj1")
 }],
-"loop": true,
+"loop": false,
 "name": &"RifleMelee",
-"speed": 5.0
+"speed": 18.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -643,9 +643,9 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("134_05q05")
 }],
-"loop": true,
+"loop": false,
 "name": &"RifleReload",
-"speed": 5.0
+"speed": 23.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -657,9 +657,9 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("117_q6cqs")
 }],
-"loop": true,
+"loop": false,
 "name": &"RifleShoot",
-"speed": 5.0
+"speed": 22.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xvq2f"]

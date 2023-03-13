@@ -3,5 +3,5 @@
         "**/.git": true,
         "**/*.import": true,
         // ".godot/**": true,
-    }
+    },
 }

@@ -34,10 +34,14 @@ var movement := Vector2.ZERO
 var shot_sfx_timer = 0
 var last_shot_sfx = sfxHandgunShot
 
+@onready var current_weapon = weaponManager.current_weapon_i
+
 func _ready() -> void:
 	_set_weapons_cooldown()
 	mov_state = MovementState.IDLE
 	weapon_state = WeaponState.IDLE
+
+	print('cooldown ', weaponManager.current_weapon.cooldown)
 
 func _physics_process(delta: float) -> void:
 	shot_sfx_timer += delta
@@ -59,17 +63,40 @@ func _physics_process(delta: float) -> void:
 	if velocity == Vector2.ZERO and mov_state != MovementState.IDLE:
 		mov_state = MovementState.IDLE
 
-	_effect_state_change()
+	_update_animations()
+
+	if Input.is_action_pressed('shoot'):
+		print('@@@ shoot')
+		if weapon_state != WeaponState.RELOAD and weapon_state != WeaponState.MELEE:
+			if current_weapon == WeaponManager.SelectedWeapon.RIFLE:
+				if weaponManager.shoot():
+					weapon_state = WeaponState.SHOOT
+					_play_sfx_handgun_shot()
+			else:
+				pass
+	elif Input.is_action_just_released('shoot'):
+		pass
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed('shoot'):
-		if weapon_state != WeaponState.RELOAD and weapon_state != WeaponState.MELEE:
-			if weaponManager.shoot():
-				weapon_state = WeaponState.SHOOT
-				_play_sfx_handgun_shot()
+	# if event.is_action_pressed('shoot', true):
+	# 	print('@@@ shoot')
+	# 	if weapon_state != WeaponState.RELOAD and weapon_state != WeaponState.MELEE:
+	# 		if weaponManager.shoot():
+	# 			weapon_state = WeaponState.SHOOT
+	# 			_play_sfx_handgun_shot()
 
-	elif event.is_action_pressed('reload'):
+	# https://godotengine.org/qa/77484/how-do-i-detect-holding-down-the-mouse
+	# if event is InputEventMouseButton:
+	# 	print('111 shoot')
+	# 	if event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+	# 		print('222 shoot')
+	# 		if weapon_state != WeaponState.RELOAD and weapon_state != WeaponState.MELEE:
+	# 			if weaponManager.shoot():
+	# 				weapon_state = WeaponState.SHOOT
+	# 				_play_sfx_handgun_shot()
+
+	if event.is_action_pressed('reload'):
 		if weapon_state != WeaponState.RELOAD:
 			if weaponManager.reload():
 				weapon_state = WeaponState.RELOAD
@@ -78,7 +105,12 @@ func _input(event: InputEvent) -> void:
 	elif event.is_action_pressed('melee'):
 		weapon_state = WeaponState.MELEE
 
-	_effect_state_change()
+	if event.is_action_pressed('change_weapon'):
+		var slot = event.as_text()
+		_change_weapon(slot)
+		weapon_state = WeaponState.IDLE
+
+	_update_animations()
 
 	# Isso vai atrapalhar a animação para MovmementState?
 	await animatedSprite.animation_finished
@@ -86,40 +118,59 @@ func _input(event: InputEvent) -> void:
 		weapon_state = WeaponState.IDLE
 
 
-func _effect_state_change():
+func _update_animations():
 	match weapon_state:
 		WeaponState.IDLE:
 			pass
 
 		WeaponState.SHOOT:
-			animatedSprite.play('HandgunShoot')
+			animatedSprite.play(_get_anim_name())
 
 		WeaponState.RELOAD:
-			animatedSprite.play('HandgunReload')
+			animatedSprite.play(_get_anim_name())
 
 		WeaponState.MELEE:
-			animatedSprite.play('HandgunMelee')
+			animatedSprite.play(_get_anim_name())
 
 	if weapon_state != WeaponState.IDLE:
 		return
 
 	match mov_state:
 		MovementState.IDLE:
-			animatedSprite.play('HandgunIdle')
+			animatedSprite.play(_get_anim_name())
 		MovementState.MOVE:
-			animatedSprite.play('HandgunMove')
+			animatedSprite.play(_get_anim_name())
 
 func _play_sfx_handgun_shot():
 	if sfxHandgunShot.playing:
 		var new_gun_shot: AudioStreamPlayer = sfxHandgunShot.duplicate()
 		get_parent().add_child(new_gun_shot)
 		new_gun_shot.play()
-		print('>>> time ', shot_sfx_timer)
+		# print('>>> time ', shot_sfx_timer)
 		shot_sfx_timer = 0
 		await new_gun_shot.finished
 		new_gun_shot.queue_free()
 	else:
 		sfxHandgunShot.play()
+
+
+func _change_weapon(weapon):
+	# print('current weapon ', current_weapon)
+	weaponManager.change_weapon(weapon)
+	var anim_name = _get_anim_name()
+	# print('changing animation to ', anim_name)
+	animatedSprite.play(anim_name)
+
+
+func _get_anim_name():
+	var weapon_state_str = WeaponState.keys()[weapon_state].capitalize()
+	var weapon_name = weaponManager.SelectedWeapon.keys()[weaponManager.current_weapon_i].capitalize()
+	var anim_name = weapon_name + weapon_state_str
+	return anim_name
+
+func _on_animated_sprite_animation_changed() -> void:
+	print('animation changed to ', animatedSprite.animation)
+	pass
 
 
 ## Tem que fazer algo parecido pra animação de melee e reload
@@ -135,17 +186,12 @@ func _set_weapons_cooldown():
 
 	assert(shoot_animation_names.size() > 0)
 	for anim_name in shoot_animation_names:
-		fps = animatedSprite.sprite_frames.get_animation_speed(anim_name)
 		frames = animatedSprite.sprite_frames.get_frame_count(anim_name)
-		anim_duration = frames/fps
-		weaponManager.handgun_cooldown = anim_duration
-		# print(anim_name)
-		# print('       frames ', frames)
-		# print('          fps ', fps)
-		# print('anim_duration ', anim_duration)
-		# print()
-
-
-func _on_animated_sprite_animation_changed() -> void:
-	pass
-	print('animation changed to ', animatedSprite.animation)
+		fps = animatedSprite.sprite_frames.get_animation_speed(anim_name)
+		anim_duration = weaponManager.current_weapon.cooldown
+		animatedSprite.sprite_frames.set_animation_speed(anim_name, fps)
+		print(anim_name)
+		print('       frames ', frames)
+		print('          fps ', fps)
+		print('anim_duration ', anim_duration)
+		print()

@@ -9,9 +9,3 @@ extends CanvasLayer
 var timer := 7.0
 var text := ''
 
-func _process(delta: float) -> void:
-	timer += delta
-	var timer_as_int = int(timer + 1)
-	text = '%2d' % timer_as_int
-	rifleBullets.text = text
-	handgunBullets.text = text
