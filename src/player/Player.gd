@@ -27,9 +27,8 @@ enum WeaponState {
 @export var weapon_state := WeaponState.IDLE:
 	set(new_state):
 		weapon_state = new_state
-		print('changing weapon state to: ', WeaponState.keys()[new_state])
+		# print('changing weapon state to: ', WeaponState.keys()[new_state])
 
-var Bullet = preload('res://src/weapon/Bullet.tscn')
 var movement := Vector2.ZERO
 var shot_sfx_timer = 0
 var last_shot_sfx = sfxHandgunShot
@@ -37,11 +36,9 @@ var last_shot_sfx = sfxHandgunShot
 @onready var current_weapon = weaponManager.current_weapon_i
 
 func _ready() -> void:
-	_set_weapons_cooldown()
+	# _set_weapons_cooldown()
 	mov_state = MovementState.IDLE
 	weapon_state = WeaponState.IDLE
-
-	print('cooldown ', weaponManager.current_weapon.cooldown)
 
 func _physics_process(delta: float) -> void:
 	shot_sfx_timer += delta
@@ -65,26 +62,26 @@ func _physics_process(delta: float) -> void:
 
 	_update_animations()
 
-	if Input.is_action_pressed('shoot'):
-		print('@@@ shoot')
-		if weapon_state != WeaponState.RELOAD and weapon_state != WeaponState.MELEE:
-			if current_weapon == WeaponManager.SelectedWeapon.RIFLE:
-				if weaponManager.shoot():
-					weapon_state = WeaponState.SHOOT
-					_play_sfx_handgun_shot()
-			else:
-				pass
-	elif Input.is_action_just_released('shoot'):
-		pass
+	# if Input.is_action_pressed('shoot'):
+	# 	print('@@@ shoot')
+	# 	if weapon_state != WeaponState.RELOAD and weapon_state != WeaponState.MELEE:
+	# 		if current_weapon == WeaponManager.SelectedWeapon.RIFLE:
+	# 			if weaponManager.shoot():
+	# 				weapon_state = WeaponState.SHOOT
+	# 				_play_sfx_handgun_shot()
+	# 		else:
+	# 			pass
+	# elif Input.is_action_just_released('shoot'):
+	# 	pass
 
 
 func _input(event: InputEvent) -> void:
-	# if event.is_action_pressed('shoot', true):
-	# 	print('@@@ shoot')
-	# 	if weapon_state != WeaponState.RELOAD and weapon_state != WeaponState.MELEE:
-	# 		if weaponManager.shoot():
-	# 			weapon_state = WeaponState.SHOOT
-	# 			_play_sfx_handgun_shot()
+	if event.is_action_pressed('shoot', true):
+		# print('@@@ shoot')
+		if weapon_state != WeaponState.RELOAD and weapon_state != WeaponState.MELEE:
+			if weaponManager.shoot():
+				weapon_state = WeaponState.SHOOT
+				_play_sfx_handgun_shot()
 
 	# https://godotengine.org/qa/77484/how-do-i-detect-holding-down-the-mouse
 	# if event is InputEventMouseButton:
@@ -164,12 +161,12 @@ func _change_weapon(weapon):
 
 func _get_anim_name():
 	var weapon_state_str = WeaponState.keys()[weapon_state].capitalize()
-	var weapon_name = weaponManager.SelectedWeapon.keys()[weaponManager.current_weapon_i].capitalize()
+	var weapon_name = weaponManager.Weapon.Type.keys()[weaponManager.current_weapon_i].capitalize()
 	var anim_name = weapon_name + weapon_state_str
 	return anim_name
 
 func _on_animated_sprite_animation_changed() -> void:
-	print('animation changed to ', animatedSprite.animation)
+	# print('animation changed to ', animatedSprite.animation)
 	pass
 
 
@@ -178,20 +175,26 @@ func _set_weapons_cooldown():
 	var animation_names = animatedSprite.sprite_frames.get_animation_names()
 	var shoot_animation_names = PackedStringArray()
 	var frames := .0
-	var fps := 0
-	var anim_duration := .0
+	var fps := 0.0
+	var cooldown := .0
 	for anim_name in animation_names:
 		if anim_name.ends_with('Shoot'):
 			shoot_animation_names.append(anim_name)
 
 	assert(shoot_animation_names.size() > 0)
+	assert(shoot_animation_names.size() == weaponManager.weapons.size())
+
+	var weapon_index = 0
 	for anim_name in shoot_animation_names:
 		frames = animatedSprite.sprite_frames.get_frame_count(anim_name)
-		fps = animatedSprite.sprite_frames.get_animation_speed(anim_name)
-		anim_duration = weaponManager.current_weapon.cooldown
+		# FIXME: BUGADO: a ordem(weaponManager.weapons) != ordem(shoot_animation_names)
+		cooldown = weaponManager.weapons[weapon_index].cooldown
+		fps = frames/cooldown
+
 		animatedSprite.sprite_frames.set_animation_speed(anim_name, fps)
 		print(anim_name)
 		print('       frames ', frames)
 		print('          fps ', fps)
-		print('anim_duration ', anim_duration)
+		print('     cooldown ', cooldown)
 		print()
+		weapon_index += 1

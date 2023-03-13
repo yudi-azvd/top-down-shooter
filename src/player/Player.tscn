@@ -689,13 +689,13 @@ position = Vector2(92, 42)
 [node name="EndPoint" type="Marker2D" parent="."]
 position = Vector2(140, 42)
 
-[node name="WeaponManager" parent="." instance=ExtResource("60_112b0")]
-
 [node name="SfxHandgunShot" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("76_0vnl3")
 
 [node name="SfxHandgunReload" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("77_xaf7h")
+
+[node name="WeaponManager" parent="." instance=ExtResource("60_112b0")]
 
 [connection signal="animation_changed" from="AnimatedSprite" to="." method="_on_animated_sprite_animation_changed"]
 

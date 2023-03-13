@@ -1,23 +1,35 @@
-class_name WeaponManager
 extends Node2D
 
 @onready var endPoint = $EndPoint
 @onready var startPoint = $StartPoint
 @onready var root := get_tree().get_root()
 
+signal weapon_shot(weapon: Weapon.Type, remaining_bullets: int)
+signal weapon_changed(weapon: Weapon.Type)
+signal weapon_reloaded(weapon: Weapon.Type, bullets: int, clips: int)
+
 var Bullet = preload('res://src/weapon/Bullet.tscn')
 
 var bullet_direction := Vector2.ZERO
 
+class Weapon:
+	var cooldown = 1
+	var timer = 0.0
+	var bullets_per_clip = 1
+	var bullets = bullets_per_clip
+	var clips = 1
+
+	enum Type {
+		RIFLE,
+		HANDGUN,
+	}
+
+var weapons: Array[Weapon] = [rifle, handgun]
+
 var handgun = Weapon.new()
 var rifle = Weapon.new()
-var weapons: Array[Weapon] = [handgun, rifle]
-enum SelectedWeapon {
-	HANDGUN,
-	RIFLE,
-}
-@export var current_weapon: Weapon = handgun
-var current_weapon_i := SelectedWeapon.HANDGUN
+var current_weapon: Weapon = handgun
+var current_weapon_i := Weapon.Type.HANDGUN
 
 func _ready() -> void:
 	handgun.cooldown = 0.1481
@@ -26,20 +38,14 @@ func _ready() -> void:
 	handgun.clips = 4
 
 	rifle.cooldown = 0.1036
-	rifle.bullets_per_clip = 25
+	rifle.bullets_per_clip = 30
 	rifle.bullets = rifle.bullets_per_clip
-	rifle.clips = 4
+	rifle.clips = 3
 
 
 func _process(delta: float) -> void:
 	handgun.timer += delta
 	rifle.timer += delta
-
-func change_weapon(target_weapon: String):
-	var i = int(target_weapon) - 1
-	current_weapon = weapons[i]
-	current_weapon_i = i
-	# print('changed weapon to ', i, current_weapon)
 
 func can_shoot() -> bool:
 	if current_weapon.timer < current_weapon.cooldown:
@@ -65,12 +71,27 @@ func shoot() -> bool:
 	bullet.rotation = PI/2 + bullet_direction.angle()
 	bullet.direction = bullet_direction
 
+	emit_signal('weapon_shot', current_weapon_i, current_weapon.bullets)
 	return true
 
 func reload() -> bool:
 	if current_weapon.clips <= 0:
 		return false
 
+	if current_weapon.bullets == current_weapon.bullets_per_clip:
+		return false
+
 	current_weapon.bullets = current_weapon.bullets_per_clip
 	current_weapon.clips -= 1
+
+	emit_signal('weapon_reloaded', current_weapon_i, current_weapon.bullets, current_weapon.clips)
 	return true
+
+func change_weapon(target_weapon: String):
+	var i = int(target_weapon) - 1
+	if i == current_weapon_i:
+		return
+	current_weapon = weapons[i]
+	current_weapon_i = i
+	print('changed weapon to ', Weapon.Type.keys()[i])
+

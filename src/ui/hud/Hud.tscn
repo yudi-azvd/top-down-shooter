@@ -7,7 +7,6 @@
 
 [node name="Hud" type="CanvasLayer"]
 script = ExtResource("1_lc2bm")
-metadata/_edit_vertical_guides_ = [1553.0, 1533.0]
 
 [node name="Weapons" type="Control" parent="."]
 layout_mode = 3
