@@ -18,16 +18,18 @@ class Weapon:
 	var bullets_per_clip = 1
 	var bullets = bullets_per_clip
 	var clips = 1
+	var type = Type
 
 	enum Type {
 		RIFLE,
 		HANDGUN,
+		KNIFE,
 	}
-
-var weapons: Array[Weapon] = [rifle, handgun]
 
 var handgun = Weapon.new()
 var rifle = Weapon.new()
+var knife = Weapon.new()
+var weapons: Array[Weapon] = [rifle, handgun, knife]
 var current_weapon: Weapon = handgun
 var current_weapon_i := Weapon.Type.HANDGUN
 
@@ -36,12 +38,16 @@ func _ready() -> void:
 	handgun.bullets_per_clip = 12
 	handgun.bullets = handgun.bullets_per_clip
 	handgun.clips = 4
+	handgun.type = Weapon.Type.HANDGUN
 
-	rifle.cooldown = 0.1036
+	rifle.cooldown = 0.1
 	rifle.bullets_per_clip = 30
 	rifle.bullets = rifle.bullets_per_clip
 	rifle.clips = 3
+	rifle.type = Weapon.Type.RIFLE
 
+	knife.cooldown = 0.2
+	knife.type = Weapon.Type.KNIFE
 
 func _process(delta: float) -> void:
 	handgun.timer += delta
@@ -57,6 +63,10 @@ func can_shoot() -> bool:
 func shoot() -> bool:
 	if not can_shoot():
 		return false
+
+	if current_weapon.type == Weapon.Type.KNIFE:
+		print('>>> knife attack!!')
+		return true
 
 	current_weapon.bullets -= 1
 	current_weapon.timer = 0
@@ -88,10 +98,9 @@ func reload() -> bool:
 	return true
 
 func change_weapon(target_weapon: String):
-	var i = int(target_weapon) - 1
-	if i == current_weapon_i:
+	var weapon_i = int(target_weapon) - 1
+	if weapon_i == current_weapon_i:
 		return
-	current_weapon = weapons[i]
-	current_weapon_i = i
-	print('changed weapon to ', Weapon.Type.keys()[i])
+	current_weapon = weapons[weapon_i]
+	current_weapon_i =  weapon_i as Weapon.Type
 
