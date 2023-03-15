@@ -1,6 +1,7 @@
-[gd_scene load_steps=158 format=3 uid="uid://od0gmm01ipqe"]
+[gd_scene load_steps=159 format=3 uid="uid://od0gmm01ipqe"]
 
 [ext_resource type="Script" path="res://src/player/Player.gd" id="1_uux53"]
+[ext_resource type="PackedScene" uid="uid://7fc2c5copgrp" path="res://src/player/PlayerAnimatedSprite.tscn" id="2_qde2s"]
 [ext_resource type="Texture2D" uid="uid://b01t4va1d0ark" path="res://assets/player/handgun/idle/survivor-idle_handgun_0.png" id="3_jyij1"]
 [ext_resource type="Texture2D" uid="uid://b51v0p0sv2c4y" path="res://assets/player/handgun/idle/survivor-idle_handgun_1.png" id="4_4xgmc"]
 [ext_resource type="Texture2D" uid="uid://cne5wjxuncf7n" path="res://assets/player/handgun/idle/survivor-idle_handgun_2.png" id="5_4ufl7"]
@@ -673,14 +674,20 @@ script = ExtResource("1_uux53")
 ACC = 52
 FRICTION = 1189
 
-[node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite" parent="." instance=ExtResource("2_qde2s")]
+sprite_frames = SubResource("SpriteFrames_ksjvv")
+animation = &"HandgunIdle"
+offset = Vector2(29, -12)
+
+[node name="_AnimatedSprite" type="AnimatedSprite2D" parent="."]
+visible = false
 position = Vector2(30, -12)
 sprite_frames = SubResource("SpriteFrames_ksjvv")
 animation = &"RifleMelee"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(17, 8)
-rotation = -2.33899
+position = Vector2(16, 10)
+rotation = -2.25846
 shape = SubResource("CapsuleShape2D_xvq2f")
 
 [node name="StartPoint" type="Marker2D" parent="."]
@@ -697,6 +704,6 @@ stream = ExtResource("77_xaf7h")
 
 [node name="WeaponManager" parent="." instance=ExtResource("60_112b0")]
 
-[connection signal="animation_changed" from="AnimatedSprite" to="." method="_on_animated_sprite_animation_changed"]
+[connection signal="animation_changed" from="_AnimatedSprite" to="." method="_on_animated_sprite_animation_changed"]
 
 [editable path="WeaponManager"]

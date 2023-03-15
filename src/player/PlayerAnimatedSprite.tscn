@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://7fc2c5copgrp"]
+
+[ext_resource type="SpriteFrames" uid="uid://cfjmctpqnfyab" path="res://src/player/PlayerAnimatedSprite.tres" id="1_hwm3y"]
+[ext_resource type="Script" path="res://src/player/PlayerAnimatedSprite.gd" id="152_e7qpq"]
+
+[node name="AnimatedSprite" type="AnimatedSprite2D"]
+sprite_frames = ExtResource("1_hwm3y")
+animation = &"RifleReload"
+offset = Vector2(60, -13)
+script = ExtResource("152_e7qpq")

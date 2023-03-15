@@ -121,22 +121,22 @@ func _update_animations():
 			pass
 
 		WeaponState.SHOOT:
-			animatedSprite.play(_get_anim_name())
+			animatedSprite.pplay(_get_anim_name())
 
 		WeaponState.RELOAD:
-			animatedSprite.play(_get_anim_name())
+			animatedSprite.pplay(_get_anim_name())
 
 		WeaponState.MELEE:
-			animatedSprite.play(_get_anim_name())
+			animatedSprite.pplay(_get_anim_name())
 
 	if weapon_state != WeaponState.IDLE:
 		return
 
 	match mov_state:
 		MovementState.IDLE:
-			animatedSprite.play(_get_anim_name())
+			animatedSprite.pplay(_get_anim_name())
 		MovementState.MOVE:
-			animatedSprite.play(_get_anim_name())
+			animatedSprite.pplay(_get_anim_name())
 
 func _play_sfx_handgun_shot():
 	if sfxHandgunShot.playing:
@@ -156,7 +156,7 @@ func _change_weapon(weapon):
 	weaponManager.change_weapon(weapon)
 	var anim_name = _get_anim_name()
 	# print('changing animation to ', anim_name)
-	animatedSprite.play(anim_name)
+	animatedSprite.pplay(anim_name)
 
 
 func _get_anim_name():
