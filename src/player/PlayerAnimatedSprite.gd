@@ -1,7 +1,7 @@
 @tool
 extends AnimatedSprite2D
 
-var dict = {
+var anims_dict = {
 	HandgunIdle = Vector2(29, -12),
 	HandgunShoot = Vector2(28, -12),
 	HandgunMelee = Vector2(41, 3),
@@ -13,10 +13,9 @@ var dict = {
 	RifleMove = Vector2(61, -17),
 	RifleShoot = Vector2(61, -17),
 	RifleReload = Vector2(60, -13),
-
-	# Knife = Vector2.ZERO,
 }
 
+# Talvez não seja necessaŕio o pplay. é só conectar ao sinal do animation ou usar apenas o _set mesmo
 func pplay(_name: StringName = &"", _custom_speed: float = 1.0, _from_end: bool = false) -> void:
 	if _name == animation:
 		return
@@ -26,14 +25,17 @@ func pplay(_name: StringName = &"", _custom_speed: float = 1.0, _from_end: bool 
 
 
 func _set(property: StringName, value) -> bool:
+	# FIXME: Se atirar muito rápido, não volta pra animação de Idle
 	if property == 'animation':
 		animation = value
+		print('animação -> ', animation)
 		apply_offset(value)
 		return true
 	return false
 
 func apply_offset(anim_name: StringName = &'') -> void:
-	if anim_name not in dict:
+	if anim_name not in anims_dict:
 		push_error('Not recognized animation: ', anim_name)
 	else:
-		offset = dict[anim_name]
+		offset = anims_dict[anim_name]
+

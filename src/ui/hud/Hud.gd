@@ -1,10 +1,10 @@
 extends CanvasLayer
 
 @onready var rifleBullets = $Weapons/Box/Rifle/Info/Bullets
-@onready var rifleClips = $Weapons/Box/Rifle/Info/Clips
+@onready var rifleMagazines = $Weapons/Box/Rifle/Info/Magazines
 
 @onready var handgunBullets = $Weapons/Box/Handgun/Info/Bullets
-@onready var handgunClips = $Weapons/Box/Handgun/Info/Clips
+@onready var handgunMagazines = $Weapons/Box/Handgun/Info/Magazines
 
 @onready var weaponManager = $'/root/World/Player/WeaponManager'
 
@@ -16,9 +16,9 @@ func _ready() -> void:
 	weaponManager.weapon_reloaded.connect(_on_weapon_reloaded)
 
 	handgunBullets.text = str(weaponManager.handgun.bullets)
-	handgunClips.text = str(weaponManager.handgun.clips)
+	handgunMagazines.text = str(weaponManager.handgun.magazines)
 	rifleBullets.text = str(weaponManager.rifle.bullets)
-	rifleClips.text = str(weaponManager.rifle.clips)
+	rifleMagazines.text = str(weaponManager.rifle.magazines)
 
 func _on_weapon_shot(weapon, remaining_bullets: int):
 	var bullets = str(remaining_bullets)
@@ -30,15 +30,15 @@ func _on_weapon_shot(weapon, remaining_bullets: int):
 	else:
 		print_debug('Weapon not recognized: ', weapon)
 
-func _on_weapon_reloaded(weapon, bullets: int, clips: int):
+func _on_weapon_reloaded(weapon, bullets: int, magazines: int):
 	var b = str(bullets)
-	var c = str(clips)
+	var c = str(magazines)
 
 	if weapon == weaponManager.Weapon.Type.HANDGUN:
 		handgunBullets.text = b
-		handgunClips.text = c
+		handgunMagazines.text = c
 	elif weapon == weaponManager.Weapon.Type.RIFLE:
 		rifleBullets.text = b
-		rifleClips.text = c
+		rifleMagazines.text = c
 	else:
 		print_debug('Weapon not recognized: ', weapon)

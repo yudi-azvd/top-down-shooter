@@ -676,8 +676,8 @@ FRICTION = 1189
 
 [node name="AnimatedSprite" parent="." instance=ExtResource("2_qde2s")]
 sprite_frames = SubResource("SpriteFrames_ksjvv")
-animation = &"HandgunIdle"
-offset = Vector2(29, -12)
+animation = &"RifleShoot"
+offset = Vector2(61, -17)
 
 [node name="_AnimatedSprite" type="AnimatedSprite2D" parent="."]
 visible = false
@@ -690,12 +690,6 @@ position = Vector2(16, 10)
 rotation = -2.25846
 shape = SubResource("CapsuleShape2D_xvq2f")
 
-[node name="StartPoint" type="Marker2D" parent="."]
-position = Vector2(92, 42)
-
-[node name="EndPoint" type="Marker2D" parent="."]
-position = Vector2(140, 42)
-
 [node name="SfxHandgunShot" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("76_0vnl3")
 
@@ -703,6 +697,9 @@ stream = ExtResource("76_0vnl3")
 stream = ExtResource("77_xaf7h")
 
 [node name="WeaponManager" parent="." instance=ExtResource("60_112b0")]
+
+[node name="EndPoint" parent="WeaponManager" index="0"]
+position = Vector2(196, 32)
 
 [connection signal="animation_changed" from="_AnimatedSprite" to="." method="_on_animated_sprite_animation_changed"]
 
