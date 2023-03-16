@@ -19,7 +19,7 @@ class Weapon:
 	var bullets_per_magazine: int = 1
 	var bullets: int = bullets_per_magazine
 	var magazines: int = 1
-	var type: Type = Type
+	var type = Type
 
 	enum Type {
 		RIFLE,
