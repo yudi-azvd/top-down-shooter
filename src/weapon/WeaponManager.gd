@@ -68,7 +68,7 @@ func can_shoot() -> bool:
 		return false
 	return true
 
-func shoot() -> bool:
+func shoot(moving: bool = false) -> bool:
 	if not can_shoot():
 		return false
 
