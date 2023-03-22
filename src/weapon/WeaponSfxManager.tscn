@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://dmbuuytrn5c7x"]
+
+[ext_resource type="Script" path="res://src/weapon/WeaponSfxManager.gd" id="1_ru5xl"]
+
+[node name="WeaponSfxManager" type="Node"]
+script = ExtResource("1_ru5xl")
+
+[node name="SfxShot" type="AudioStreamPlayer" parent="."]
+
+[node name="SfxReload" type="AudioStreamPlayer" parent="."]

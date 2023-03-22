@@ -9,8 +9,6 @@ extends CharacterBody2D
 
 @onready var animatedSprite := $AnimatedSprite
 @onready var weaponManager := $WeaponManager
-@onready var sfxHandgunReload := $SfxHandgunReload
-@onready var sfxHandgunShot := $SfxHandgunShot
 
 enum MovementState {
 	IDLE,
@@ -25,8 +23,7 @@ enum WeaponState {
 }
 @export var weapon_state := WeaponState.IDLE
 var movement: Vector2= Vector2.ZERO
-var shot_sfx_timer: float = 0
-var last_shot_sfx = sfxHandgunShot
+
 var is_holding_shoot: bool = false
 var _anim_name: StringName = &''
 
@@ -39,7 +36,6 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	shot_sfx_timer += delta
 	look_at(get_global_mouse_position())
 
 	movement = Vector2(
@@ -65,7 +61,6 @@ func _physics_process(delta: float) -> void:
 			is_holding_shoot = true
 			if weaponManager.shoot(mov_state == MovementState.MOVE):
 				weapon_state = WeaponState.SHOOT
-				_play_sfx_handgun_shot()
 	elif Input.is_action_just_released('shoot'):
 		is_holding_shoot = false
 
@@ -89,7 +84,6 @@ func _input(event: InputEvent) -> void:
 		if weapon_state != WeaponState.RELOAD:
 			if weaponManager.reload():
 				weapon_state = WeaponState.RELOAD
-				sfxHandgunReload.play()
 
 	elif event.is_action_pressed('melee'):
 		weapon_state = WeaponState.MELEE
@@ -133,19 +127,6 @@ func _update_animations() -> void:
 			animatedSprite.play(_anim_name)
 
 
-func _play_sfx_handgun_shot() -> void:
-	if sfxHandgunShot.playing:
-		var new_gun_shot: AudioStreamPlayer = sfxHandgunShot.duplicate()
-		get_parent().add_child(new_gun_shot)
-		new_gun_shot.play()
-		# print('>>> time ', shot_sfx_timer)
-		shot_sfx_timer = 0
-		await new_gun_shot.finished
-		new_gun_shot.queue_free()
-	else:
-		sfxHandgunShot.play()
-
-
 func _change_weapon(weapon) -> void:
 	weaponManager.change_weapon(weapon)
 	_anim_name = _get_anim_name()
@@ -158,7 +139,7 @@ func _get_anim_name() -> StringName:
 		weapon_state_str = 'Move'
 	else:
 		weapon_state_str = WeaponState.keys()[weapon_state].capitalize()
-	var weapon_name = weaponManager.Weapon.Type.keys()[weaponManager.current_weapon_i].capitalize()
+	var weapon_name = Weapon.Type.keys()[weaponManager.current_weapon_i].capitalize()
 	var anim_name = weapon_name + weapon_state_str
 	return anim_name
 

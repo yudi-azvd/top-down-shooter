@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cq5y3m5qmvwr0"]
+[gd_scene load_steps=4 format=3 uid="uid://d2xi640iqkdye"]
 
 [ext_resource type="Script" path="res://src/weapon/Bullet.gd" id="1_5jty3"]
 [ext_resource type="Texture2D" uid="uid://duujajn08ym6y" path="res://assets/other/icon-bullet-handgun.png" id="2_q10dd"]

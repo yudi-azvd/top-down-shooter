@@ -1,6 +1,7 @@
 @tool
 extends Node2D
 
+@onready var weaponSfxManager = $WeaponSfxManager
 @onready var root := get_tree().get_root()
 @onready var endPoint: Marker2D = $EndPoint
 var startPoint: Vector2 = Vector2.ZERO
@@ -14,20 +15,6 @@ var Bullet = preload('res://src/weapon/Bullet.tscn')
 var bullet_direction := Vector2.ZERO
 var rng = RandomNumberGenerator.new()
 var deviation: float = 0
-
-class Weapon:
-	var cooldown: float = 1
-	var timer : float = 0.0
-	var bullets_per_magazine: int = 1
-	var bullets: int = bullets_per_magazine
-	var magazines: int = 1
-	var type = Type
-
-	enum Type {
-		RIFLE,
-		HANDGUN,
-		KNIFE,
-	}
 
 var handgun = Weapon.new()
 var rifle = Weapon.new()
@@ -59,11 +46,14 @@ func _ready() -> void:
 
 	knife.cooldown = 0.2
 	knife.type = Weapon.Type.KNIFE
+	
+	weaponSfxManager.change_weapon(current_weapon_i)
 
 func _process(delta: float) -> void:
 	handgun.timer += delta
 	rifle.timer += delta
-
+	knife.timer += delta
+	
 func can_shoot() -> bool:
 	if current_weapon.timer < current_weapon.cooldown:
 		return false
@@ -100,6 +90,7 @@ func shoot(moving: bool = false) -> bool:
 	bullet.direction = bullet_direction
 
 	weapon_shot.emit(current_weapon_i, current_weapon.bullets)
+	weaponSfxManager.play_shot()
 	return true
 
 func reload() -> bool:
@@ -112,7 +103,9 @@ func reload() -> bool:
 	current_weapon.bullets = current_weapon.bullets_per_magazine
 	current_weapon.magazines -= 1
 
-	emit_signal('weapon_reloaded', current_weapon_i, current_weapon.bullets, current_weapon.magazines)
+	weapon_reloaded.emit(current_weapon_i, current_weapon.bullets, current_weapon.magazines)
+#	sfxHandgunReload.play()
+	weaponSfxManager.play_reload()
 	return true
 
 func change_weapon(target_weapon: String):
@@ -120,9 +113,10 @@ func change_weapon(target_weapon: String):
 	if weapon_i == current_weapon_i:
 		return
 	current_weapon = weapons[weapon_i]
-	current_weapon_i =  weapon_i as Weapon.Type
+	current_weapon_i = weapon_i as Weapon.Type
 
 	_update_weapon_endpoint(current_weapon_i)
+	weaponSfxManager.change_weapon(current_weapon_i)
 
 func _update_weapon_endpoint(weapon: Weapon.Type):
 	if weapon == Weapon.Type.RIFLE:
@@ -130,4 +124,3 @@ func _update_weapon_endpoint(weapon: Weapon.Type):
 	elif weapon == Weapon.Type.HANDGUN:
 		endPoint.position = bullet_positions_dict.handgun
 	startPoint = Vector2(endPoint.position.x - 10, endPoint.position.y)
-

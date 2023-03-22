@@ -23,9 +23,9 @@ func _ready() -> void:
 func _on_weapon_shot(weapon, remaining_bullets: int):
 	var bullets = str(remaining_bullets)
 
-	if weapon == weaponManager.Weapon.Type.HANDGUN:
+	if weapon == Weapon.Type.HANDGUN:
 		handgunBullets.text = bullets
-	elif weapon == weaponManager.Weapon.Type.RIFLE:
+	elif weapon == Weapon.Type.RIFLE:
 		rifleBullets.text = bullets
 	else:
 		print_debug('Weapon not recognized: ', weapon)
@@ -34,10 +34,10 @@ func _on_weapon_reloaded(weapon, bullets: int, magazines: int):
 	var b = str(bullets)
 	var c = str(magazines)
 
-	if weapon == weaponManager.Weapon.Type.HANDGUN:
+	if weapon == Weapon.Type.HANDGUN:
 		handgunBullets.text = b
 		handgunMagazines.text = c
-	elif weapon == weaponManager.Weapon.Type.RIFLE:
+	elif weapon == Weapon.Type.RIFLE:
 		rifleBullets.text = b
 		rifleMagazines.text = c
 	else:
