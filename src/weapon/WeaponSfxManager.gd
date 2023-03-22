@@ -11,6 +11,7 @@ var _handgun_sfx = WeaponSfx.new()
 
 func _ready() -> void:
 	_rifle_sfx.reload = preload('res://assets/sfx/rifle-reload.mp3')
+	# FIXME: esse asset é temporário!
 	_rifle_sfx.shot = preload('res://assets/sfx/handgun-shot.mp3')
 	
 	_handgun_sfx.reload = preload('res://assets/sfx/handgun-reload.mp3')
@@ -41,4 +42,4 @@ func change_weapon(weapon: Weapon.Type):
 			_sfx_reload.stream = _rifle_sfx.reload
 			_sfx_shot.stream = _rifle_sfx.shot
 		_:
-			push_error('Did not found weapon ', Weapon.Type.keys()[weapon])
+			push_error('Weapon not found: ', weapon)

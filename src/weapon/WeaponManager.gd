@@ -119,8 +119,10 @@ func change_weapon(target_weapon: String):
 	weaponSfxManager.change_weapon(current_weapon_i)
 
 func _update_weapon_endpoint(weapon: Weapon.Type):
-	if weapon == Weapon.Type.RIFLE:
-		endPoint.position = bullet_positions_dict.rifle
-	elif weapon == Weapon.Type.HANDGUN:
-		endPoint.position = bullet_positions_dict.handgun
+	match weapon:
+		Weapon.Type.RIFLE:
+			endPoint.position = bullet_positions_dict.rifle
+		Weapon.Type.HANDGUN:
+			endPoint.position = bullet_positions_dict.handgun
+		_: push_error('Weapon not found: ', weapon)
 	startPoint = Vector2(endPoint.position.x - 10, endPoint.position.y)
