@@ -16,22 +16,14 @@ enum MovementState {
 	IDLE,
 	MOVE,
 }
-@export var mov_state := MovementState.IDLE:
-	set(new_state):
-		mov_state = new_state
-#		print('changing mov state to: ', MovementState.keys()[new_state])
-
+@export var mov_state := MovementState.IDLE
 enum WeaponState {
 	IDLE,
 	SHOOT,
 	RELOAD,
 	MELEE,
 }
-@export var weapon_state := WeaponState.IDLE:
-	set(new_state):
-		weapon_state = new_state
-		# print('changing weapon state to: ', WeaponState.keys()[new_state])
-
+@export var weapon_state := WeaponState.IDLE
 var movement: Vector2= Vector2.ZERO
 var shot_sfx_timer: float = 0
 var last_shot_sfx = sfxHandgunShot
@@ -44,6 +36,7 @@ func _ready() -> void:
 	# _set_weapons_cooldown()
 	mov_state = MovementState.IDLE
 	weapon_state = WeaponState.IDLE
+
 
 func _physics_process(delta: float) -> void:
 	shot_sfx_timer += delta
@@ -66,21 +59,31 @@ func _physics_process(delta: float) -> void:
 		mov_state = MovementState.IDLE
 
 	_update_animations()
+	
+	if Input.is_action_pressed('shoot'):
+		if weapon_state != WeaponState.RELOAD:
+			is_holding_shoot = true
+			if weaponManager.shoot(mov_state == MovementState.MOVE):
+				weapon_state = WeaponState.SHOOT
+				_play_sfx_handgun_shot()
+	elif Input.is_action_just_released('shoot'):
+		is_holding_shoot = false
 
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed('exit'):
 		get_tree().quit()
 
-	elif event.is_action_pressed('shoot', true):
-		is_holding_shoot = true
-		if weapon_state != WeaponState.RELOAD and weapon_state != WeaponState.MELEE:
-			if weaponManager.shoot(mov_state == MovementState.MOVE):
-				weapon_state = WeaponState.SHOOT
-				_play_sfx_handgun_shot()
-	
-	elif event.is_action_released('shoot'):
-		is_holding_shoot = false
+#	elif event.is_action_pressed('shoot', true):
+#		is_holding_shoot = true
+#		if weapon_state != WeaponState.RELOAD and weapon_state != WeaponState.MELEE:
+#			if weaponManager.can_shoot():
+#				weaponManager.shoot(mov_state == MovementState.MOVE)
+#				weapon_state = WeaponState.SHOOT
+#				_play_sfx_handgun_shot()
+#
+#	elif event.is_action_released('shoot'):
+#		is_holding_shoot = false
 	
 	elif event.is_action_pressed('reload'):
 		if weapon_state != WeaponState.RELOAD:
@@ -104,7 +107,7 @@ func _input(event: InputEvent) -> void:
 		weapon_state = WeaponState.IDLE
 
 
-func _update_animations():
+func _update_animations() -> void:
 	_anim_name = _get_anim_name()
 	# Redundante? Talvez sim
 	match weapon_state:
@@ -130,7 +133,7 @@ func _update_animations():
 			animatedSprite.play(_anim_name)
 
 
-func _play_sfx_handgun_shot():
+func _play_sfx_handgun_shot() -> void:
 	if sfxHandgunShot.playing:
 		var new_gun_shot: AudioStreamPlayer = sfxHandgunShot.duplicate()
 		get_parent().add_child(new_gun_shot)
@@ -143,10 +146,10 @@ func _play_sfx_handgun_shot():
 		sfxHandgunShot.play()
 
 
-func _change_weapon(weapon):
+func _change_weapon(weapon) -> void:
 	weaponManager.change_weapon(weapon)
-	var anim_name = _get_anim_name()
-	animatedSprite.play(anim_name)
+	_anim_name = _get_anim_name()
+	animatedSprite.play(_anim_name)
 
 
 func _get_anim_name() -> StringName:

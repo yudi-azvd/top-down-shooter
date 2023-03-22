@@ -2,14 +2,14 @@
 
 [ext_resource type="Script" path="res://src/player/Player.gd" id="1_uux53"]
 [ext_resource type="SpriteFrames" uid="uid://cfjmctpqnfyab" path="res://src/player/PlayerAnimations.tres" id="2_8x86r"]
+[ext_resource type="AudioStream" uid="uid://ch4dda6eofxo4" path="res://assets/sfx/handgun-reload.mp3" id="5_jsrbw"]
 [ext_resource type="PackedScene" uid="uid://febl5rj1q4ip" path="res://src/weapon/WeaponManager.tscn" id="60_112b0"]
 [ext_resource type="AudioStream" uid="uid://bqw0m6t7pnebx" path="res://assets/sfx/handgun_shot.mp3" id="76_0vnl3"]
-[ext_resource type="AudioStream" uid="uid://cf3n2exty1pfl" path="res://assets/sfx/gunreload1.mp3" id="77_xaf7h"]
 [ext_resource type="Script" path="res://src/player/AnimatedSprite.gd" id="155_s7kj3"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xvq2f"]
-radius = 40.1411
-height = 148.641
+radius = 38.4155
+height = 141.85
 
 [node name="Player" type="CharacterBody2D"]
 scale = Vector2(0.5, 0.5)
@@ -20,12 +20,14 @@ FRICTION = 1189
 
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_8x86r")
-animation = &"HandgunIdle"
-offset = Vector2(29, -12)
+animation = &"HandgunReload"
+frame = 14
+frame_progress = 1.0
+offset = Vector2(29, -5)
 script = ExtResource("155_s7kj3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(16, 10)
+position = Vector2(16, 8)
 rotation = -2.25846
 shape = SubResource("CapsuleShape2D_xvq2f")
 
@@ -33,7 +35,7 @@ shape = SubResource("CapsuleShape2D_xvq2f")
 stream = ExtResource("76_0vnl3")
 
 [node name="SfxHandgunReload" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("77_xaf7h")
+stream = ExtResource("5_jsrbw")
 
 [node name="WeaponManager" parent="." instance=ExtResource("60_112b0")]
 

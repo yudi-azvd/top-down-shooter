@@ -12,6 +12,8 @@ signal weapon_reloaded(weapon: Weapon.Type, bullets: int, magazines: int)
 var Bullet = preload('res://src/weapon/Bullet.tscn')
 
 var bullet_direction := Vector2.ZERO
+var rng = RandomNumberGenerator.new()
+var deviation: float = 0
 
 class Weapon:
 	var cooldown: float = 1
@@ -33,6 +35,7 @@ var knife = Weapon.new()
 var weapons: Array[Weapon] = [rifle, handgun, knife]
 var current_weapon: Weapon = handgun
 var current_weapon_i: Weapon.Type = Weapon.Type.HANDGUN
+var is_holding_shoot: bool = false
 
 var bullet_positions_dict = {
 	rifle = Vector2(196, 32),
@@ -48,7 +51,7 @@ func _ready() -> void:
 	handgun.magazines = 4
 	handgun.type = Weapon.Type.HANDGUN
 
-	rifle.cooldown = 0.1
+	rifle.cooldown = 0.07
 	rifle.bullets_per_magazine = 30
 	rifle.bullets = rifle.bullets_per_magazine
 	rifle.magazines = 3
@@ -79,7 +82,14 @@ func shoot(moving: bool = false) -> bool:
 	current_weapon.bullets -= 1
 	current_weapon.timer = 0
 
-	bullet_direction = (endPoint.global_position - to_global(startPoint)).normalized()
+	if moving:
+		deviation = 0.08
+	else:
+		deviation = 0.0
+	
+	bullet_direction = (endPoint.global_position - to_global(startPoint))\
+		.normalized()\
+		.rotated(rng.randf_range(-deviation, deviation))
 	var bullet = Bullet.instantiate()
 
 	root.add_child(bullet)
@@ -89,7 +99,7 @@ func shoot(moving: bool = false) -> bool:
 	bullet.rotation = PI/2 + bullet_direction.angle()
 	bullet.direction = bullet_direction
 
-	emit_signal('weapon_shot', current_weapon_i, current_weapon.bullets)
+	weapon_shot.emit(current_weapon_i, current_weapon.bullets)
 	return true
 
 func reload() -> bool:

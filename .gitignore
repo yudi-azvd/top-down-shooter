@@ -16,6 +16,3 @@ data_*/
 *.flac
 
 .godot/*
-
-*tscn-*
-project.godot-*
