@@ -8,6 +8,9 @@ var bullets: int = bullets_per_magazine
 var magazines: int = 1
 var type: Type
 
+var is_primary_action_continuous: bool = false
+var is_secondary_action_continuous: bool = false
+
 enum Type {
 	RIFLE,
 	HANDGUN,

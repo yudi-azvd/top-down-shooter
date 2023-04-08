@@ -43,17 +43,18 @@ func _ready() -> void:
 	rifle.bullets = rifle.bullets_per_magazine
 	rifle.magazines = 3
 	rifle.type = Weapon.Type.RIFLE
+	rifle.is_primary_action_continuous = true
 
 	knife.cooldown = 0.2
 	knife.type = Weapon.Type.KNIFE
-	
+
 	weaponSfxManager.change_weapon(current_weapon_i)
 
 func _process(delta: float) -> void:
 	handgun.timer += delta
 	rifle.timer += delta
 	knife.timer += delta
-	
+
 func can_shoot() -> bool:
 	if current_weapon.timer < current_weapon.cooldown:
 		return false
@@ -64,6 +65,12 @@ func can_shoot() -> bool:
 func shoot(moving: bool = false) -> bool:
 	if not can_shoot():
 		return false
+
+	if not current_weapon.is_primary_action_continuous and is_holding_shoot:
+		return false
+
+	if current_weapon.is_primary_action_continuous and is_holding_shoot:
+		pass
 
 	if current_weapon.type == Weapon.Type.KNIFE:
 		print('>>> knife attack!!')
@@ -76,7 +83,7 @@ func shoot(moving: bool = false) -> bool:
 		deviation = 0.08
 	else:
 		deviation = 0.0
-	
+
 	bullet_direction = (endPoint.global_position - to_global(startPoint))\
 		.normalized()\
 		.rotated(rng.randf_range(-deviation, deviation))

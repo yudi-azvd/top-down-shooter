@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://src/player/Player.gd" id="1_uux53"]
 [ext_resource type="SpriteFrames" uid="uid://cfjmctpqnfyab" path="res://src/player/PlayerAnimations.tres" id="2_8x86r"]
-[ext_resource type="PackedScene" uid="uid://febl5rj1q4ip" path="res://src/weapon/WeaponManager.tscn" id="60_112b0"]
+[ext_resource type="PackedScene" uid="uid://7nijrfpkkwj" path="res://src/weapon/WeaponManager.tscn" id="60_112b0"]
 [ext_resource type="Script" path="res://src/player/AnimatedSprite.gd" id="155_s7kj3"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xvq2f"]
@@ -14,10 +14,7 @@ scale = Vector2(0.5, 0.5)
 slide_on_ceiling = false
 script = ExtResource("1_uux53")
 ACC = 52
-MAX_SPEED = null
 FRICTION = 1189
-mov_state = null
-weapon_state = null
 
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_8x86r")

@@ -55,31 +55,20 @@ func _physics_process(delta: float) -> void:
 		mov_state = MovementState.IDLE
 
 	_update_animations()
-	
+
 	if Input.is_action_pressed('shoot'):
 		if weapon_state != WeaponState.RELOAD:
-			is_holding_shoot = true
 			if weaponManager.shoot(mov_state == MovementState.MOVE):
 				weapon_state = WeaponState.SHOOT
+				weaponManager.is_holding_shoot = true
 	elif Input.is_action_just_released('shoot'):
-		is_holding_shoot = false
+		weaponManager.is_holding_shoot = false
 
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed('exit'):
 		get_tree().quit()
 
-#	elif event.is_action_pressed('shoot', true):
-#		is_holding_shoot = true
-#		if weapon_state != WeaponState.RELOAD and weapon_state != WeaponState.MELEE:
-#			if weaponManager.can_shoot():
-#				weaponManager.shoot(mov_state == MovementState.MOVE)
-#				weapon_state = WeaponState.SHOOT
-#				_play_sfx_handgun_shot()
-#
-#	elif event.is_action_released('shoot'):
-#		is_holding_shoot = false
-	
 	elif event.is_action_pressed('reload'):
 		if weapon_state != WeaponState.RELOAD:
 			if weaponManager.reload():
@@ -119,7 +108,7 @@ func _update_animations() -> void:
 
 	if weapon_state != WeaponState.IDLE:
 		return
-	
+
 	match mov_state:
 		MovementState.IDLE:
 			animatedSprite.play(_anim_name)
