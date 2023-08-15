@@ -8,7 +8,7 @@ extends CharacterBody2D
 @onready var endPoint :  Vector2
 
 @onready var animatedSprite := $AnimatedSprite
-@onready var weaponManager := $WeaponManager
+@onready var itemManager := $ItemManager
 
 enum MovementState {
 	IDLE,
@@ -27,7 +27,7 @@ var movement: Vector2= Vector2.ZERO
 var is_holding_shoot: bool = false
 var _anim_name: StringName = &''
 
-@onready var current_weapon = weaponManager.current_weapon_i
+@onready var current_weapon = itemManager.current_weapon_i
 
 func _ready() -> void:
 	# _set_weapons_cooldown()
@@ -39,7 +39,7 @@ func _physics_process(delta: float) -> void:
 	look_at(get_global_mouse_position())
 
 	movement = Vector2(
-		Input.get_axis("ui_left", "ui_right"),
+		Input.get_axis('ui_left', 'ui_right'),
 		Input.get_axis('ui_up','ui_down')
 	).normalized()
 
@@ -56,13 +56,15 @@ func _physics_process(delta: float) -> void:
 
 	_update_animations()
 
-	if Input.is_action_pressed('shoot'):
+	if Input.is_action_pressed('primary_action'):
 		if weapon_state != WeaponState.RELOAD:
-			if weaponManager.shoot(mov_state == MovementState.MOVE):
+			if itemManager.shoot(mov_state == MovementState.MOVE):
 				weapon_state = WeaponState.SHOOT
-				weaponManager.is_holding_shoot = true
-	elif Input.is_action_just_released('shoot'):
-		weaponManager.is_holding_shoot = false
+				itemManager.is_holding_shoot = true
+	elif Input.is_action_just_released('primary_action'):
+		itemManager.is_holding_shoot = false
+	elif Input.is_action_pressed('secondary_action'):
+		pass
 
 
 func _input(event: InputEvent) -> void:
@@ -71,10 +73,10 @@ func _input(event: InputEvent) -> void:
 
 	elif event.is_action_pressed('reload'):
 		if weapon_state != WeaponState.RELOAD:
-			if weaponManager.reload():
+			if itemManager.reload():
 				weapon_state = WeaponState.RELOAD
 
-	elif event.is_action_pressed('melee'):
+	elif event.is_action_pressed('secondary_action'):
 		weapon_state = WeaponState.MELEE
 
 	elif event.is_action_pressed('change_weapon'):
@@ -92,19 +94,11 @@ func _input(event: InputEvent) -> void:
 
 func _update_animations() -> void:
 	_anim_name = _get_anim_name()
-	# Redundante? Talvez sim
-	match weapon_state:
-		WeaponState.IDLE:
-			pass
 
-		WeaponState.SHOOT:
-			animatedSprite.play(_anim_name)
+	if weapon_state == WeaponState.IDLE:
+		pass
 
-		WeaponState.RELOAD:
-			animatedSprite.play(_anim_name)
-
-		WeaponState.MELEE:
-			animatedSprite.play(_anim_name)
+	animatedSprite.play(_anim_name)
 
 	if weapon_state != WeaponState.IDLE:
 		return
@@ -117,7 +111,7 @@ func _update_animations() -> void:
 
 
 func _change_weapon(weapon) -> void:
-	weaponManager.change_weapon(weapon)
+	itemManager.change_weapon(weapon)
 	_anim_name = _get_anim_name()
 	animatedSprite.play(_anim_name)
 
@@ -128,7 +122,7 @@ func _get_anim_name() -> StringName:
 		weapon_state_str = 'Move'
 	else:
 		weapon_state_str = WeaponState.keys()[weapon_state].capitalize()
-	var weapon_name = Weapon.Type.keys()[weaponManager.current_weapon_i].capitalize()
+	var weapon_name = Item.Type.keys()[itemManager.current_weapon_i].capitalize()
 	var anim_name = weapon_name + weapon_state_str
 	return anim_name
 
@@ -145,13 +139,13 @@ func _set_weapons_cooldown():
 			shoot_animation_names.append(anim_name)
 
 	assert(shoot_animation_names.size() > 0)
-	assert(shoot_animation_names.size() == weaponManager.weapons.size())
+	assert(shoot_animation_names.size() == itemManager.weapons.size())
 
 	var weapon_index = 0
 	for anim_name in shoot_animation_names:
 		frames = animatedSprite.sprite_frames.get_frame_count(anim_name)
-		# FIXME: BUGADO: a ordem(weaponManager.weapons) != ordem(shoot_animation_names)
-		cooldown = weaponManager.weapons[weapon_index].cooldown
+		# FIXME: BUGADO: a ordem(itemManager.weapons) != ordem(shoot_animation_names)
+		cooldown = itemManager.weapons[weapon_index].cooldown
 		fps = frames/cooldown
 
 		animatedSprite.sprite_frames.set_animation_speed(anim_name, fps)

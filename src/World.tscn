@@ -12,5 +12,8 @@ position = Vector2(1512, 212)
 [node name="Player" parent="." instance=ExtResource("2_ess6w")]
 position = Vector2(622, 241)
 ACC = 1000
+MAX_SPEED = null
+mov_state = null
+weapon_state = null
 
 [node name="Hud" parent="." instance=ExtResource("3_jfga6")]

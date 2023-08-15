@@ -6,9 +6,9 @@ extends Node2D
 @onready var endPoint: Marker2D = $EndPoint
 var startPoint: Vector2 = Vector2.ZERO
 
-signal weapon_shot(weapon: Weapon.Type, remaining_bullets: int)
-signal weapon_changed(weapon: Weapon.Type)
-signal weapon_reloaded(weapon: Weapon.Type, bullets: int, magazines: int)
+signal weapon_shot(weapon: Item.Type, remaining_bullets: int)
+signal weapon_changed(weapon: Item.Type)
+signal weapon_reloaded(weapon: Item.Type, bullets: int, magazines: int)
 
 var Bullet = preload('res://src/weapon/Bullet.tscn')
 
@@ -16,12 +16,13 @@ var bullet_direction := Vector2.ZERO
 var rng = RandomNumberGenerator.new()
 var deviation: float = 0
 
-var handgun = Weapon.new()
-var rifle = Weapon.new()
-var knife = Weapon.new()
-var weapons: Array[Weapon] = [rifle, handgun, knife]
-var current_weapon: Weapon = handgun
-var current_weapon_i: Weapon.Type = Weapon.Type.HANDGUN
+var handgun = Item.new()
+var rifle = Item.new()
+var knife = Item.new()
+var flare_sticks = Item.new()
+var weapons: Array[Item] = [rifle, handgun, knife]
+var current_weapon: Item = handgun
+var current_weapon_i: Item.Type = Item.Type.HANDGUN
 var is_holding_shoot: bool = false
 
 var bullet_positions_dict = {
@@ -36,17 +37,17 @@ func _ready() -> void:
 	handgun.bullets_per_magazine = 12
 	handgun.bullets = handgun.bullets_per_magazine
 	handgun.magazines = 4
-	handgun.type = Weapon.Type.HANDGUN
+	handgun.type = Item.Type.HANDGUN
 
 	rifle.cooldown = 0.07
 	rifle.bullets_per_magazine = 30
 	rifle.bullets = rifle.bullets_per_magazine
 	rifle.magazines = 3
-	rifle.type = Weapon.Type.RIFLE
+	rifle.type = Item.Type.RIFLE
 	rifle.is_primary_action_continuous = true
 
 	knife.cooldown = 0.2
-	knife.type = Weapon.Type.KNIFE
+	knife.type = Item.Type.KNIFE
 
 	weaponSfxManager.change_weapon(current_weapon_i)
 
@@ -72,7 +73,7 @@ func shoot(moving: bool = false) -> bool:
 	if current_weapon.is_primary_action_continuous and is_holding_shoot:
 		pass
 
-	if current_weapon.type == Weapon.Type.KNIFE:
+	if current_weapon.type == Item.Type.KNIFE:
 		print('>>> knife attack!!')
 		return true
 
@@ -120,16 +121,19 @@ func change_weapon(target_weapon: String):
 	if weapon_i == current_weapon_i:
 		return
 	current_weapon = weapons[weapon_i]
-	current_weapon_i = weapon_i as Weapon.Type
+	current_weapon_i = weapon_i as Item.Type
 
 	_update_weapon_endpoint(current_weapon_i)
 	weaponSfxManager.change_weapon(current_weapon_i)
 
-func _update_weapon_endpoint(weapon: Weapon.Type):
+func _update_weapon_endpoint(weapon: Item.Type):
 	match weapon:
-		Weapon.Type.RIFLE:
+		Item.Type.RIFLE:
 			endPoint.position = bullet_positions_dict.rifle
-		Weapon.Type.HANDGUN:
+		Item.Type.HANDGUN:
 			endPoint.position = bullet_positions_dict.handgun
-		_: push_error('Weapon not found: ', weapon)
+		_:
+			endPoint.position = Vector2.ZERO
+			# push_error('Item not found: ', weapon)
+
 	startPoint = Vector2(endPoint.position.x - 10, endPoint.position.y)

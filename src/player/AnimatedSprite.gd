@@ -13,6 +13,10 @@ var anims_dict = {
 	RifleMove = Vector2(61, -17),
 	RifleShoot = Vector2(61, -17),
 	RifleReload = Vector2(60, -13),
+
+	KnifeIdle = Vector2(30, 0),
+	KnifeMove = Vector2(-28, 10),
+	KnifeShoot = Vector2(60, 36),
 }
 
 func apply_offset(anim_name: StringName = &'') -> void:

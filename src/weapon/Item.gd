@@ -1,4 +1,4 @@
-class_name Weapon
+class_name Item
 extends Node
 
 var cooldown: float = 1

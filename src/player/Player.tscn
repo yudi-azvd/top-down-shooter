@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://src/player/Player.gd" id="1_uux53"]
 [ext_resource type="SpriteFrames" uid="uid://cfjmctpqnfyab" path="res://src/player/PlayerAnimations.tres" id="2_8x86r"]
-[ext_resource type="PackedScene" uid="uid://7nijrfpkkwj" path="res://src/weapon/WeaponManager.tscn" id="60_112b0"]
+[ext_resource type="PackedScene" uid="uid://bl5xt5yxljtg3" path="res://src/weapon/ItemManager.tscn" id="60_112b0"]
 [ext_resource type="Script" path="res://src/player/AnimatedSprite.gd" id="155_s7kj3"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_xvq2f"]
@@ -14,14 +14,16 @@ scale = Vector2(0.5, 0.5)
 slide_on_ceiling = false
 script = ExtResource("1_uux53")
 ACC = 52
+MAX_SPEED = null
 FRICTION = 1189
+mov_state = null
+weapon_state = null
 
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(4, 2)
 sprite_frames = ExtResource("2_8x86r")
-animation = &"HandgunReload"
-frame = 14
-frame_progress = 1.0
-offset = Vector2(29, -5)
+animation = &"KnifeMelee"
+offset = Vector2(30, 0)
 script = ExtResource("155_s7kj3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -29,8 +31,8 @@ position = Vector2(16, 8)
 rotation = -2.25846
 shape = SubResource("CapsuleShape2D_xvq2f")
 
-[node name="WeaponManager" parent="." instance=ExtResource("60_112b0")]
+[node name="ItemManager" parent="." instance=ExtResource("60_112b0")]
 
 [connection signal="animation_changed" from="AnimatedSprite" to="AnimatedSprite" method="_on_animation_changed"]
 
-[editable path="WeaponManager"]
+[editable path="ItemManager"]
