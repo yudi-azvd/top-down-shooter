@@ -1,6 +1,8 @@
 class_name Item
 extends Node
 
+var count: int = 0
+
 var cooldown: float = 1
 var timer : float = 0.0
 var bullets_per_magazine: int = 1
@@ -15,4 +17,5 @@ enum Type {
 	RIFLE,
 	HANDGUN,
 	KNIFE,
+	FLARE_STICK,
 }

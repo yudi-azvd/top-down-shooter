@@ -21,9 +21,9 @@ var rifle = Item.new()
 var knife = Item.new()
 var flare_sticks = Item.new()
 var weapons: Array[Item] = [rifle, handgun, knife]
-var current_weapon: Item = handgun
-var current_weapon_i: Item.Type = Item.Type.HANDGUN
-var is_holding_shoot: bool = false
+var current_item: Item = handgun
+var current_item_i: Item.Type = Item.Type.HANDGUN
+var is_holding_primary_action: bool = false
 
 var bullet_positions_dict = {
 	rifle = Vector2(196, 32),
@@ -31,7 +31,8 @@ var bullet_positions_dict = {
 }
 
 func _ready() -> void:
-	_update_weapon_endpoint(current_weapon_i)
+	_update_weapon_endpoint(current_item_i)
+	weaponSfxManager.change_weapon(current_item_i)
 
 	handgun.cooldown = 0.1481
 	handgun.bullets_per_magazine = 12
@@ -48,37 +49,53 @@ func _ready() -> void:
 
 	knife.cooldown = 0.2
 	knife.type = Item.Type.KNIFE
+	knife.is_primary_action_continuous = false
 
-	weaponSfxManager.change_weapon(current_weapon_i)
+	flare_sticks.count = 1
+	flare_sticks.cooldown = 0.5
+	flare_sticks.type = Item.Type.FLARE_STICK
 
 func _process(delta: float) -> void:
 	handgun.timer += delta
 	rifle.timer += delta
 	knife.timer += delta
 
-func can_shoot() -> bool:
-	if current_weapon.timer < current_weapon.cooldown:
+func primary_action(moving: bool) -> bool:
+	if current_item.type == Item.Type.KNIFE:
+		return true
+
+	if current_item.type == Item.Type.RIFLE or current_item.type == Item.Type.HANDGUN:
+		if _can_shoot():
+			_shoot(moving)
+
+	return true
+
+func secondary_action() -> void:
+	pass
+
+func _can_shoot() -> bool:
+	if current_item.timer < current_item.cooldown:
 		return false
-	if current_weapon.bullets <= 0:
+	if current_item.bullets <= 0:
 		return false
 	return true
 
-func shoot(moving: bool = false) -> bool:
-	if not can_shoot():
+func _shoot(moving: bool = false) -> bool:
+	if not _can_shoot():
 		return false
 
-	if not current_weapon.is_primary_action_continuous and is_holding_shoot:
+	if not current_item.is_primary_action_continuous and is_holding_primary_action:
 		return false
 
-	if current_weapon.is_primary_action_continuous and is_holding_shoot:
+	if current_item.is_primary_action_continuous and is_holding_primary_action:
 		pass
 
-	if current_weapon.type == Item.Type.KNIFE:
+	if current_item.type == Item.Type.KNIFE:
 		print('>>> knife attack!!')
 		return true
 
-	current_weapon.bullets -= 1
-	current_weapon.timer = 0
+	current_item.bullets -= 1
+	current_item.timer = 0
 
 	if moving:
 		deviation = 0.08
@@ -97,34 +114,35 @@ func shoot(moving: bool = false) -> bool:
 	bullet.rotation = PI/2 + bullet_direction.angle()
 	bullet.direction = bullet_direction
 
-	weapon_shot.emit(current_weapon_i, current_weapon.bullets)
+	weapon_shot.emit(current_item_i, current_item.bullets)
 	weaponSfxManager.play_shot()
 	return true
 
 func reload() -> bool:
-	if current_weapon.magazines <= 0:
+	if current_item.magazines <= 0:
 		return false
 
-	if current_weapon.bullets == current_weapon.bullets_per_magazine:
+	if current_item.bullets == current_item.bullets_per_magazine:
 		return false
 
-	current_weapon.bullets = current_weapon.bullets_per_magazine
-	current_weapon.magazines -= 1
+	current_item.bullets = current_item.bullets_per_magazine
+	current_item.magazines -= 1
 
-	weapon_reloaded.emit(current_weapon_i, current_weapon.bullets, current_weapon.magazines)
+	weapon_reloaded.emit(current_item_i, current_item.bullets, current_item.magazines)
 #	sfxHandgunReload.play()
 	weaponSfxManager.play_reload()
 	return true
 
-func change_weapon(target_weapon: String):
+func change_weapon(target_weapon: String) -> Item.Type:
 	var weapon_i = int(target_weapon) - 1
-	if weapon_i == current_weapon_i:
-		return
-	current_weapon = weapons[weapon_i]
-	current_weapon_i = weapon_i as Item.Type
+	if weapon_i == current_item_i:
+		return current_item_i
+	current_item = weapons[weapon_i]
+	current_item_i = weapon_i as Item.Type
 
-	_update_weapon_endpoint(current_weapon_i)
-	weaponSfxManager.change_weapon(current_weapon_i)
+	_update_weapon_endpoint(current_item_i)
+	weaponSfxManager.change_weapon(current_item_i)
+	return current_item_i
 
 func _update_weapon_endpoint(weapon: Item.Type):
 	match weapon:

@@ -41,5 +41,7 @@ func change_weapon(weapon: Item.Type):
 		Item.Type.RIFLE:
 			_sfx_reload.stream = _rifle_sfx.reload
 			_sfx_shot.stream = _rifle_sfx.shot
+		Item.Type.KNIFE:
+			pass
 		_:
-			push_error('Item not found: ', weapon)
+			push_error('Item not found: ', weapon,' ', Item.Type.keys()[weapon])

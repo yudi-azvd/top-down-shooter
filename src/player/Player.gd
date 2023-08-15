@@ -15,24 +15,24 @@ enum MovementState {
 	MOVE,
 }
 @export var mov_state := MovementState.IDLE
-enum WeaponState {
+enum ItemState {
 	IDLE,
-	SHOOT,
+	PRIMARY_ACTION,
 	RELOAD,
-	MELEE,
+	SECONDARY_ACTION,
 }
-@export var weapon_state := WeaponState.IDLE
+@export var item_state := ItemState.IDLE
 var movement: Vector2= Vector2.ZERO
 
 var is_holding_shoot: bool = false
 var _anim_name: StringName = &''
 
-@onready var current_weapon = itemManager.current_weapon_i
+@onready var current_item = itemManager.current_item_i
 
 func _ready() -> void:
 	# _set_weapons_cooldown()
 	mov_state = MovementState.IDLE
-	weapon_state = WeaponState.IDLE
+	item_state = ItemState.IDLE
 
 
 func _physics_process(delta: float) -> void:
@@ -57,14 +57,15 @@ func _physics_process(delta: float) -> void:
 	_update_animations()
 
 	if Input.is_action_pressed('primary_action'):
-		if weapon_state != WeaponState.RELOAD:
-			if itemManager.shoot(mov_state == MovementState.MOVE):
-				weapon_state = WeaponState.SHOOT
-				itemManager.is_holding_shoot = true
+		if item_state != ItemState.RELOAD:
+			if itemManager.primary_action(mov_state == MovementState.MOVE):
+				item_state = ItemState.PRIMARY_ACTION
+				itemManager.is_holding_primary_action = true
 	elif Input.is_action_just_released('primary_action'):
-		itemManager.is_holding_shoot = false
-	elif Input.is_action_pressed('secondary_action'):
-		pass
+		itemManager.is_holding_primary_action = false
+
+	# elif Input.is_action_pressed('secondary_action'):
+	# 	pass
 
 
 func _input(event: InputEvent) -> void:
@@ -72,35 +73,40 @@ func _input(event: InputEvent) -> void:
 		get_tree().quit()
 
 	elif event.is_action_pressed('reload'):
-		if weapon_state != WeaponState.RELOAD:
+		if item_state != ItemState.RELOAD:
 			if itemManager.reload():
-				weapon_state = WeaponState.RELOAD
+				item_state = ItemState.RELOAD
 
 	elif event.is_action_pressed('secondary_action'):
-		weapon_state = WeaponState.MELEE
+		if current_item == Item.Type.KNIFE or current_item == Item.Type.FLARE_STICK:
+			pass
+		else:
+			print('current_item = ', current_item)
+			item_state = ItemState.SECONDARY_ACTION
 
-	elif event.is_action_pressed('change_weapon'):
-		var slot = event.as_text()
-		_change_weapon(slot)
-		weapon_state = WeaponState.IDLE
+	elif event.is_action_pressed('change_item'):
+		var slot := event.as_text()
+		print('change item to ', slot)
+		_change_item(slot)
+		item_state = ItemState.IDLE
 
 	_update_animations()
 
 	# Isso vai atrapalhar a animação para MovmementState?
 	await animatedSprite.animation_finished
-	if weapon_state != WeaponState.IDLE:
-		weapon_state = WeaponState.IDLE
+	if item_state != ItemState.IDLE:
+		item_state = ItemState.IDLE
 
 
 func _update_animations() -> void:
 	_anim_name = _get_anim_name()
 
-	if weapon_state == WeaponState.IDLE:
+	if item_state == ItemState.IDLE:
 		pass
 
 	animatedSprite.play(_anim_name)
 
-	if weapon_state != WeaponState.IDLE:
+	if item_state != ItemState.IDLE:
 		return
 
 	match mov_state:
@@ -110,20 +116,22 @@ func _update_animations() -> void:
 			animatedSprite.play(_anim_name)
 
 
-func _change_weapon(weapon) -> void:
-	itemManager.change_weapon(weapon)
+func _change_item(item: String) -> void:
+	current_item = itemManager.change_weapon(item)
 	_anim_name = _get_anim_name()
 	animatedSprite.play(_anim_name)
 
 
+# FIXME: Aposto que é muito horrível em desempenho. Ainda é chamado a cada frame
 func _get_anim_name() -> StringName:
-	var weapon_state_str: String = ''
-	if weapon_state == WeaponState.IDLE and mov_state == MovementState.MOVE:
-		weapon_state_str = 'Move'
+	var item_state_str: String = ''
+	if item_state == ItemState.IDLE and mov_state == MovementState.MOVE:
+		item_state_str = 'Move'
 	else:
-		weapon_state_str = WeaponState.keys()[weapon_state].capitalize()
-	var weapon_name = Item.Type.keys()[itemManager.current_weapon_i].capitalize()
-	var anim_name = weapon_name + weapon_state_str
+		var sep_str: PackedStringArray = ItemState.keys()[item_state].capitalize().split(' ')
+		item_state_str = ''.join(sep_str)
+	var item_name = Item.Type.keys()[itemManager.current_item_i].capitalize()
+	var anim_name = item_name + item_state_str
 	return anim_name
 
 

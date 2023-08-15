@@ -14,16 +14,13 @@ scale = Vector2(0.5, 0.5)
 slide_on_ceiling = false
 script = ExtResource("1_uux53")
 ACC = 52
-MAX_SPEED = null
 FRICTION = 1189
-mov_state = null
-weapon_state = null
 
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
 position = Vector2(4, 2)
 sprite_frames = ExtResource("2_8x86r")
-animation = &"KnifeMelee"
-offset = Vector2(30, 0)
+animation = &"RiflePrimaryAction"
+offset = Vector2(61, -17)
 script = ExtResource("155_s7kj3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
