@@ -19,8 +19,8 @@ FRICTION = 1189
 [node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
 position = Vector2(4, 2)
 sprite_frames = ExtResource("2_8x86r")
-animation = &"RiflePrimaryAction"
-offset = Vector2(61, -17)
+animation = &"KnifePrimaryAction"
+offset = Vector2(55.435, 34.76)
 script = ExtResource("155_s7kj3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

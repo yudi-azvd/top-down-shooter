@@ -77,11 +77,11 @@ func _input(event: InputEvent) -> void:
 			if itemManager.reload():
 				item_state = ItemState.RELOAD
 
+	# Talvez essa lógica faça mais sentida dentro do itemManager
 	elif event.is_action_pressed('secondary_action'):
 		if current_item == Item.Type.KNIFE or current_item == Item.Type.FLARE_STICK:
 			pass
 		else:
-			print('current_item = ', current_item)
 			item_state = ItemState.SECONDARY_ACTION
 
 	elif event.is_action_pressed('change_item'):

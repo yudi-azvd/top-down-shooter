@@ -30,6 +30,7 @@ var bullet_positions_dict = {
 	handgun = Vector2(142, 42),
 }
 
+
 func _ready() -> void:
 	_update_weapon_endpoint(current_item_i)
 	weaponSfxManager.change_weapon(current_item_i)
@@ -55,10 +56,12 @@ func _ready() -> void:
 	flare_sticks.cooldown = 0.5
 	flare_sticks.type = Item.Type.FLARE_STICK
 
+
 func _process(delta: float) -> void:
 	handgun.timer += delta
 	rifle.timer += delta
 	knife.timer += delta
+
 
 func primary_action(moving: bool) -> bool:
 	if current_item.type == Item.Type.KNIFE:
@@ -67,33 +70,27 @@ func primary_action(moving: bool) -> bool:
 	if current_item.type == Item.Type.RIFLE or current_item.type == Item.Type.HANDGUN:
 		if _can_shoot():
 			_shoot(moving)
+		else:
+			return false
 
 	return true
+
 
 func secondary_action() -> void:
 	pass
 
+
 func _can_shoot() -> bool:
+	if not current_item.is_primary_action_continuous and is_holding_primary_action:
+		return false
 	if current_item.timer < current_item.cooldown:
 		return false
 	if current_item.bullets <= 0:
 		return false
 	return true
 
+
 func _shoot(moving: bool = false) -> bool:
-	if not _can_shoot():
-		return false
-
-	if not current_item.is_primary_action_continuous and is_holding_primary_action:
-		return false
-
-	if current_item.is_primary_action_continuous and is_holding_primary_action:
-		pass
-
-	if current_item.type == Item.Type.KNIFE:
-		print('>>> knife attack!!')
-		return true
-
 	current_item.bullets -= 1
 	current_item.timer = 0
 
@@ -118,6 +115,7 @@ func _shoot(moving: bool = false) -> bool:
 	weaponSfxManager.play_shot()
 	return true
 
+
 func reload() -> bool:
 	if current_item.magazines <= 0:
 		return false
@@ -133,6 +131,7 @@ func reload() -> bool:
 	weaponSfxManager.play_reload()
 	return true
 
+
 func change_weapon(target_weapon: String) -> Item.Type:
 	var weapon_i = int(target_weapon) - 1
 	if weapon_i == current_item_i:
@@ -143,6 +142,7 @@ func change_weapon(target_weapon: String) -> Item.Type:
 	_update_weapon_endpoint(current_item_i)
 	weaponSfxManager.change_weapon(current_item_i)
 	return current_item_i
+
 
 func _update_weapon_endpoint(weapon: Item.Type):
 	match weapon:
