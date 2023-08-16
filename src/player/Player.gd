@@ -33,6 +33,7 @@ func _ready() -> void:
 	# _set_weapons_cooldown()
 	mov_state = MovementState.IDLE
 	item_state = ItemState.IDLE
+	_update_animations()
 
 
 func _physics_process(delta: float) -> void:
@@ -46,6 +47,7 @@ func _physics_process(delta: float) -> void:
 	if movement != Vector2.ZERO:
 		velocity = velocity.move_toward(movement*MAX_SPEED, ACC*delta)
 		mov_state = MovementState.MOVE
+		_update_animations()
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION*delta)
 
@@ -53,13 +55,13 @@ func _physics_process(delta: float) -> void:
 
 	if velocity == Vector2.ZERO and mov_state != MovementState.IDLE:
 		mov_state = MovementState.IDLE
-
-	_update_animations()
+		_update_animations()
 
 	if Input.is_action_pressed('primary_action'):
 		if item_state != ItemState.RELOAD:
 			if itemManager.primary_action(mov_state == MovementState.MOVE):
 				item_state = ItemState.PRIMARY_ACTION
+				_update_animations()
 				itemManager.is_holding_primary_action = true
 	elif Input.is_action_just_released('primary_action'):
 		itemManager.is_holding_primary_action = false
@@ -76,6 +78,7 @@ func _input(event: InputEvent) -> void:
 		if item_state != ItemState.RELOAD:
 			if itemManager.reload():
 				item_state = ItemState.RELOAD
+				_update_animations()
 
 	# Talvez essa lógica faça mais sentida dentro do itemManager
 	elif event.is_action_pressed('secondary_action'):
@@ -83,22 +86,24 @@ func _input(event: InputEvent) -> void:
 			pass
 		else:
 			item_state = ItemState.SECONDARY_ACTION
+			_update_animations()
 
 	elif event.is_action_pressed('change_item'):
 		var slot := event.as_text()
 		print('change item to ', slot)
 		_change_item(slot)
 		item_state = ItemState.IDLE
-
-	_update_animations()
+		_update_animations()
 
 	# Isso vai atrapalhar a animação para MovmementState?
 	await animatedSprite.animation_finished
 	if item_state != ItemState.IDLE:
 		item_state = ItemState.IDLE
+		_update_animations()
 
 
 func _update_animations() -> void:
+	print('_update_animations')
 	_anim_name = _get_anim_name()
 
 	if item_state == ItemState.IDLE:
@@ -122,7 +127,7 @@ func _change_item(item: String) -> void:
 	animatedSprite.play(_anim_name)
 
 
-# FIXME: Aposto que é muito horrível em desempenho. Ainda é chamado a cada frame
+# FIXME: Aposto que é muito horrível em desempenho
 func _get_anim_name() -> StringName:
 	var item_state_str: String = ''
 	if item_state == ItemState.IDLE and mov_state == MovementState.MOVE:
