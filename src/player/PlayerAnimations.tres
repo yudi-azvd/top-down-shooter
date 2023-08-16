@@ -629,7 +629,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("108_jm5lt")
 }],
-"loop": true,
+"loop": false,
 "name": &"KnifePrimaryAction",
 "speed": 20.0
 }, {
