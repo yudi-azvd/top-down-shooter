@@ -80,12 +80,13 @@ func _input(event: InputEvent) -> void:
 				item_state = ItemState.RELOAD
 				_update_animations()
 
-	# Talvez essa lógica faça mais sentida dentro do itemManager
+	# Talvez essa lógica faça mais sentido dentro do itemManager
 	elif event.is_action_pressed('secondary_action'):
 		if current_item == Item.Type.KNIFE or current_item == Item.Type.FLARE_STICK:
 			pass
 		else:
 			item_state = ItemState.SECONDARY_ACTION
+			# itemManager.secondary_action()
 			_update_animations()
 
 	elif event.is_action_pressed('change_item'):
@@ -96,14 +97,13 @@ func _input(event: InputEvent) -> void:
 		_update_animations()
 
 	# Isso vai atrapalhar a animação para MovmementState?
-	await animatedSprite.animation_finished
 	if item_state != ItemState.IDLE:
+		await animatedSprite.animation_finished
 		item_state = ItemState.IDLE
 		_update_animations()
 
 
 func _update_animations() -> void:
-	print('_update_animations')
 	_anim_name = _get_anim_name()
 
 	if item_state == ItemState.IDLE:

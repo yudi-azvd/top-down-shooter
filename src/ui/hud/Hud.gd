@@ -20,7 +20,8 @@ func _ready() -> void:
 	rifleBullets.text = str(itemManager.rifle.bullets)
 	rifleMagazines.text = str(itemManager.rifle.magazines)
 
-func _on_weapon_shot(weapon, remaining_bullets: int):
+
+func _on_weapon_shot(weapon: Item.Type, remaining_bullets: int):
 	var bullets = str(remaining_bullets)
 
 	if weapon == Item.Type.HANDGUN:
@@ -28,9 +29,10 @@ func _on_weapon_shot(weapon, remaining_bullets: int):
 	elif weapon == Item.Type.RIFLE:
 		rifleBullets.text = bullets
 	else:
-		print_debug('Item not recognized: ', weapon)
+		print_debug('Item not recognized: ', weapon, ' ', Item.Type.keys()[weapon])
 
-func _on_weapon_reloaded(weapon, bullets: int, magazines: int):
+
+func _on_weapon_reloaded(weapon: Item.Type, bullets: int, magazines: int):
 	var b = str(bullets)
 	var c = str(magazines)
 
@@ -41,4 +43,4 @@ func _on_weapon_reloaded(weapon, bullets: int, magazines: int):
 		rifleBullets.text = b
 		rifleMagazines.text = c
 	else:
-		print_debug('Item not recognized: ', weapon)
+		print_debug('Item not recognized: ', weapon, ' ', Item.Type.keys()[weapon])
