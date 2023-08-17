@@ -126,6 +126,11 @@ func _change_item(item: String) -> void:
 	_anim_name = _get_anim_name()
 	animatedSprite.play(_anim_name)
 
+	if current_item == Item.Type.KNIFE:
+		$CollisionShape2D.rotation = deg_to_rad(-216.9)
+	else:
+		$CollisionShape2D.rotation = deg_to_rad(-129.4)
+
 
 # FIXME: Aposto que é muito horrível em desempenho
 func _get_anim_name() -> StringName:
