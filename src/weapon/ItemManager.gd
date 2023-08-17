@@ -65,6 +65,11 @@ func _process(delta: float) -> void:
 
 func primary_action(moving: bool) -> bool:
 	if current_item.type == Item.Type.KNIFE:
+		# NOTE: Lógica parecida com o _shoot(). Precisa abstrair?
+		if not current_item.is_primary_action_continuous and is_holding_primary_action:
+			return false
+		if current_item.timer < current_item.cooldown:
+			return false
 		return true
 
 	if current_item.type == Item.Type.RIFLE or current_item.type == Item.Type.HANDGUN:
